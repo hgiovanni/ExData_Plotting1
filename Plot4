@@ -1,0 +1,29 @@
+datos <- read.table("household_power_consumption.txt", header = TRUE, sep = ";", na.strings = "?")  ##read the file
+datos$Date <- as.Date(datos$Date, "%d/%m/20%y")  ## convert character to date
+datos2 <- datos[datos$Date <= "2007-02-02",]  ## subset date of interest
+datos2 <- datos2[datos2$Date >= "2007-02-01",]
+comb <- paste(datos2$Date, datos2$Time) ## combine 
+datos2 <- cbind(comb, datos2)
+datos2$comb <- strptime(datos2$comb, format = "20%y-%m-%d %H:%M:%S")
+## create multiple base plots
+par(mfrow = c(2,2))
+## graphic No.1
+datos2$Global_active_power <- as.numeric(as.character(datos2$Global_active_power))
+plot(datos2$comb, datos2$Global_active_power, type = "l", col = "black", ylab = "Global Active Power", xlab = "")
+## graphic No.2
+datos2$Voltage <- as.numeric(as.character(datos2$Voltage))
+plot(datos2$comb, datos2$Voltage, type = "l", col = "black", ylab = "Voltage", xlab = "Datetime")
+## graphic No.3
+datos2$Sub_metering_1 <- as.numeric(as.character(datos2$Sub_metering_1))
+datos2$Sub_metering_2 <- as.numeric(as.character(datos2$Sub_metering_2))
+datos2$Sub_metering_3 <- as.numeric(as.character(datos2$Sub_metering_3))
+plot(datos2$comb, datos2$Sub_metering_1, type = "l", col = "black", ylab = "Energy sub metering", xlab = "")
+par(lines(datos2$comb, datos2$Sub_metering_2), col = "red")
+par(lines(datos2$comb, datos2$Sub_metering_3), col = "blue")
+par(legend("topright", pch = "-", col = c("black", "red", "blue"), legend = c("Sub_met_1", "Sub_met_2", "Sub_met_3")))
+## graphic No.4
+datos2$Global_reactive_power <- as.numeric(as.character(datos2$Global_reactive_power))
+plot(datos2$comb, datos2$Global_reactive_power, type = "l", col = "black", ylab = "Global_Reactive_Power", xlab = "datetime")
+## create png
+dev.copy(png, file = "plot4.png", width = 480, height = 480)
+dev.off()
