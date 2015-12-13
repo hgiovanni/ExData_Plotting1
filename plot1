@@ -1,0 +1,11 @@
+datos <- read.table("household_power_consumption.txt", header = TRUE, sep = ";", na.strings = "?")  ##read the file
+datos$Date <- as.Date(datos$Date, "%d/%m/20%y")  ## convert character to date
+datos2 <- datos[datos$Date <= "2007-02-02",]  ## subset date of interest
+datos2 <- datos2[datos2$Date >= "2007-02-01",]  ## subsed date of interest
+comb <- paste(datos2$Date, datos2$Time) ## combine data and time
+datos2 <- cbind(comb, datos2) ## add column
+datos2$comb <- strptime(datos2$comb, format = "20%y-%m-%d %H:%M:%S") ## convert to date/time
+datos2$Global_active_power <- as.numeric(as.character(datos2$Global_active_power)) ## convert to numeric
+hist(datos2$Global_active_power, freq = TRUE, xlab = "Global Active Power (kilowatts)", main = "Global Active Power", col = "blue", border = "red")  ## create plot
+dev.copy(png, file = "plot1.png", width = 480, height = 480)  ## create png file
+dev.off()   
